@@ -1,0 +1,35 @@
+node
+{
+    
+//Checkout Code Stage
+
+stage('CheckoutCode'){
+    git branch: 'dev', credentialsId: '5e38a476-8c9e-4bd3-8359-96460d3f73ce', url: 'https://github.com/vikrambatch/nodejs-app-mss.git'
+}
+
+//Build
+
+stage('Build'){
+sh "npm install"
+}
+
+
+//Execute SonarQube Report
+
+stage('ExecuteSonarQubeReport'){
+nodejs(nodeJSInstallationName: 'NodeJS 18.6.0'){
+sh "npm run sonar"
+}
+}
+
+//Upload Artifacts into Nexus
+stage('UploadArtifactsintoNexus'){
+sh "npm publish"
+
+}
+//Deploy App to Tomcat
+stage('RunNodeJsApp'){
+sh "node run app.js &"
+}
+
+}
